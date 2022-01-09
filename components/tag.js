@@ -8,7 +8,7 @@ const Tag = styled.div`
   display: inline-block;
   background: ${gray};
   color: ${blue};
-  text-transform: capitalize;
+  text-transform: ${({ textTransform }) => textTransform};
   padding: 5px 18px;
   border-radius: ${borderRadius};
   font-weight: ${semiBold};

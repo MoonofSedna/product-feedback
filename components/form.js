@@ -126,7 +126,7 @@ const TextArea = styled.textarea`
   background-color: ${gray};
   border: none;
   border-radius: 5px;
-  padding: 22px 22px;
+  padding: ${({ padding }) => (padding ? padding : "22px")};
   color: ${darkBlue2};
   font-weight: ${regular};
   font-size: ${textBody2};

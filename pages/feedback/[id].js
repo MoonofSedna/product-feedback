@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import Layout from "../../components/layout";
 import { useRouter } from "next/router";
-
+import Link from "next/link";
 import Image from "next/image";
 // components
 import { Card, CardBody, CardHeader } from "../../components/card";
@@ -23,29 +23,20 @@ import useValidation from "../../hooks/useValidation";
 const {
   darkBlue,
   darkBlue2,
-  darkBlue3,
   blue2,
-  gray,
   gray3,
   purple,
   purple2,
-  orange,
-  orange2,
   white,
-  red,
   lineColor,
   regular,
   semibold,
   bold,
-  h1,
   h3,
   h4,
   blue,
-  textBody2,
   textBody3,
-  borderRadius,
   withoutBackground,
-  boxShadow,
 } = StyleSheet;
 
 const Container = styled.div`
@@ -421,13 +412,15 @@ export default function Suggestion() {
           >
             Go Back
           </TextButton>
-          <Button
-            className="color-button"
-            backgroundColor={blue}
-            hoverBackgroundColor={blue2}
-          >
-            Edit Feedback
-          </Button>
+          <Link href={`${id}/edit-feedback`} passHref>
+            <Button
+              className="color-button"
+              backgroundColor={blue}
+              hoverBackgroundColor={blue2}
+            >
+              Edit Feedback
+            </Button>
+          </Link>
         </CardHeader>
         {!loading && (
           <>

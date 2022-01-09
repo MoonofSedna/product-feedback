@@ -34,6 +34,7 @@ const Container = styled.div`
     border: none;
     font-weight: ${bold};
     font-size: ${h4};
+    text-transform: capitalize;
     background-color: ${withoutBackground};
     &:hover,
     &:focus,
@@ -83,6 +84,7 @@ const Container = styled.div`
     padding: 10px 24px;
     font-size: ${textBody};
     text-decoration: none;
+    text-transform: capitalize;
     &:hover {
       color: ${purple};
       background: ${white};
@@ -124,6 +126,7 @@ export default function DropdownMenu({
   title,
   getValue,
   objectWithKey,
+  defaultValue,
 }) {
   const [currentValue, setCurrentValue] = useState(
     objectWithKey ? Object.keys(items)[0] : items[0]
@@ -133,6 +136,12 @@ export default function DropdownMenu({
     setCurrentValue(e);
     getValue(e);
   };
+
+  useEffect(() => {
+    if (defaultValue) {
+      setCurrentValue(defaultValue);
+    }
+  }, [defaultValue]);
 
   return (
     <Container>
@@ -147,7 +156,10 @@ export default function DropdownMenu({
               <Dropdown.Item
                 key={item}
                 eventKey={item}
-                className={currentValue === item && "active-item"}
+                className={
+                  currentValue.toLocaleLowerCase() ===
+                    item.toLocaleLowerCase() && "active-item"
+                }
               >
                 {item}
               </Dropdown.Item>
@@ -156,7 +168,10 @@ export default function DropdownMenu({
               <Dropdown.Item
                 key={item}
                 eventKey={item}
-                className={currentValue === item && "active-item"}
+                className={
+                  currentValue.toLocaleLowerCase() ===
+                    item.toLocaleLowerCase() && "active-item"
+                }
               >
                 {item}
               </Dropdown.Item>

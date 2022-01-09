@@ -10,6 +10,7 @@ import { Button } from "../components/button";
 import { Title, SubTitle } from "../components/text";
 import Spacer from "../components/spacer";
 import { Form, TextArea } from "../components/form";
+import FeedbackForm from "../components/feedback-form";
 // images
 import ArrowLeft from "../public/images/icon-arrow-left.svg";
 import NewFeedback from "../public/images/icon-new-feedback.svg";
@@ -111,8 +112,8 @@ const Container = styled.div`
   }
 `;
 
-export default function AddFeedBack({ feedback }) {
-  const [category, setCategory] = useState("all");
+export default function AddFeedBack() {
+  const [category, setCategory] = useState("ui");
 
   const router = useRouter();
 
@@ -145,132 +146,10 @@ export default function AddFeedBack({ feedback }) {
     addSuggestion
   );
 
+  const formProps = { values, errors, handleChange, handleSubmit };
   return (
     <Layout>
-      <Container>
-        <CardHeader backgroundColor={withoutBackground}>
-          <SubTitle
-            display="flex"
-            fontSize={h4}
-            fontWeight={bold}
-            textColor={gray3}
-            cursor="pointer"
-            decoration="underline"
-            onClick={() => router.back()}
-          >
-            <Image
-              src={ArrowLeft}
-              width={8}
-              height={8}
-              objectFit="contain"
-              alt="arrow"
-            />
-            <Spacer width="10px" />
-            Go Back
-          </SubTitle>
-        </CardHeader>
-        <Image
-          src={NewFeedback}
-          alt="comment"
-          width="56px"
-          height="56px"
-          objectFit="contain"
-        />
-        <Card
-          display="flex"
-          justifyContent="center"
-          padding="50px 40px 40px 40px"
-        >
-          <Title>Create a New Feedback</Title>
-
-          <Form onSubmit={handleSubmit}>
-            <div>
-              <label>Feedback title</label>
-              <small>Add a short descriptive headline</small>
-              <Spacer height="12px" />
-              <input
-                type="text"
-                name="title"
-                value={values.title}
-                onChange={handleChange}
-                className={errors.title && "error"}
-              />
-              {errors.title && <small>{errors.title}</small>}
-            </div>
-            <Spacer height="25px" />
-            <div>
-              <label>Category</label>
-              <small>Choose a category for your feedback</small>
-              <Spacer height="12px" />
-              <DropdownMenu items={itemCategories} getValue={setCategory} />
-            </div>
-
-            {feedback && (
-              <div>
-                <Spacer height="25px" />
-                <label>Update Status</label>
-                <small>Change feature state</small>
-                <Spacer height="12px" />
-                <DropdownMenu items={itemStatus} />
-              </div>
-            )}
-            <Spacer height="25px" />
-            <div>
-              <label>Feedbgack Detail</label>
-              <small>
-                Include any specific comments on what should be improved, added,
-                etc.
-              </small>
-              <Spacer height="12px" />
-              <TextArea
-                height="100px"
-                name="description"
-                value={values.description}
-                onChange={handleChange}
-                className={errors.description && "error"}
-              />
-              {errors.description && <small>{errors.description}</small>}
-            </div>
-            <Spacer height="40px" />
-
-            <div className="button-container">
-              <div>
-                {feedback && (
-                  <Button
-                    backgroundColor={red}
-                    hoverBackgroundColor={orange2}
-                    textColor={white}
-                    fontSize={h4}
-                    className="color-button"
-                  >
-                    Delete
-                  </Button>
-                )}
-              </div>
-
-              <Button
-                backgroundColor={darkBlue2}
-                hoverBackgroundColor={darlBlue3}
-                textColor={white}
-                fontSize={h4}
-                className="color-button"
-                onClick={() => router.back()}
-                type="button"
-              >
-                Cancel
-              </Button>
-              <Button
-                backgroundColor={purple}
-                hoverBackgroundColor={purple2}
-                className="color-button"
-                type="submit"
-              >
-                Add Feedback
-              </Button>
-            </div>
-          </Form>
-        </Card>
-      </Container>
+      <FeedbackForm {...formProps} getCategory={setCategory} />
     </Layout>
   );
 }

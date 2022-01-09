@@ -1,11 +1,11 @@
 const itemOrder = {
-  "Most Upvotes": { data: "upvotes", order: "desc" },
-  "Least Upvotes": { data: "upvotes", order: "asc" },
-  "Most Comments": { data: "comments", order: "desc" },
-  "Least Comments": { data: "comments", order: "asc" },
+  "most upvotes": { data: "upvotes", order: "desc" },
+  "least upvotes": { data: "upvotes", order: "asc" },
+  "most momments": { data: "comments", order: "desc" },
+  "least comments": { data: "comments", order: "asc" },
 };
-const itemCategories = ["UI", "UX", "Enhancement", "Bug", "Feature"];
+const itemCategories = ["UI", "UX", "enhancement", "bug", "feature"];
 
-const itemStatus = ["Suggestion", "Planned", "In Progress", "Live"];
+const itemStatus = ["Suggestion", "Planned", "In-Progress", "Live"];
 
 export { itemOrder, itemCategories, itemStatus };

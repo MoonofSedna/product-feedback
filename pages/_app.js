@@ -24,11 +24,11 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [setFeedbacks]);
 
   return (
     <SSRProvider>
-      <UserContext.Provider value={{ user, feedbacks }}>
+      <UserContext.Provider value={{ user, feedbacks, setFeedbacks }}>
         <Head>
           <meta
             name="viewport"

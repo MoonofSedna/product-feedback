@@ -71,7 +71,7 @@ const Container = styled.div`
 `;
 
 export default function Home() {
-  const { feedbacks } = useContext(UserContext);
+  const { feedbacks, setFeedbacks } = useContext(UserContext);
 
   const [suggestions, setSuggestions] = useState(feedbacks);
   const [filterBy, setFilterBy] = useState("all");
@@ -83,7 +83,6 @@ export default function Home() {
 
   const filterSuggestions = () => {
     const orderKey = itemOrder[sortBy];
-
     const sortData = suggestionsLength.sort(function (a, b) {
       if (orderKey.order === "desc") {
         if (orderKey.data === "comments") {
@@ -107,7 +106,6 @@ export default function Home() {
         return item.category === filterBy;
       }
     });
-
     return filterData;
   };
 
@@ -157,7 +155,11 @@ export default function Home() {
             </Link>
           </CardHeader>
           {filterSuggestions().length > 0 ? (
-            <Suggestions data={filterSuggestions()} />
+            <Suggestions
+              data={filterSuggestions()}
+              feedbacks={feedbacks}
+              fetchData={setFeedbacks}
+            />
           ) : (
             <Card
               margin="20px 0"

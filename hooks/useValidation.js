@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 
-const useValidation = (initialState, validate, func) => {
+const useValidation = (initialState, validate, func, defaultValue) => {
   const [values, setValues] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [characters, setCharacters] = useState(0);
@@ -15,6 +15,10 @@ const useValidation = (initialState, validate, func) => {
       setIsSubmitting(false);
     }
   }, [isSubmitting]);
+
+  useEffect(() => {
+    setValues(defaultValue);
+  }, [defaultValue]);
 
   const handleChange = (event) => {
     setCharacters(event.target.value.length);

@@ -1,44 +1,49 @@
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-// components
-import { Card, CardHeader, CardBody } from "../components/card";
 import styled from "@emotion/styled";
-import Button from "../components/button";
-import { Title, Text } from "../components/text";
-import Tag from "../components/tag";
+// components
 import FeedbackCard from "./feedback-card";
-// images
-import ArrowUpIcon from "../public/images/icon-arrow-up.svg";
-import ArrowUpIconHover from "../public/images/ArrowWhite.svg";
-import CommentIcon from "../public/images/icon-comments.svg";
 // utils
+import addVote from "../utils/addVote";
 import { StyleSheet } from "../utils/style-sheet";
 
+const { blue } = StyleSheet;
+
 const Container = styled.div`
-  & > a > div {
+  & > div {
     margin: 20px 0;
+    h2 {
+      cursor: pointer;
+      :hover {
+        color: ${blue};
+      }
+    }
   }
   @media (max-width: 767px) {
     padding: 22px;
     & > div {
       margin: 12px 0;
     }
-    & > a:not(:first-of-type) > div {
+    & > div {
       margin: 15px 0;
+    }
+    & > div {
+      margin-bottom: 15px;
     }
   }
 `;
 
-export default function Suggestions({ data }) {
+export default function Suggestions({ data, feedbacks, fetchData }) {
   return (
     <Container>
-      {data?.map((data) => (
-        <Link href={`suggestion/${data.id}`} key={data.id} passHref>
-          <a>
-            <FeedbackCard data={data} hoverCard />
-          </a>
-        </Link>
+      {data.map((feedback) => (
+        <FeedbackCard
+          key={feedback.id}
+          data={feedback}
+          hoverCard
+          withLink
+          vote={() => addVote(feedback, feedbacks, fetchData)}
+        />
       ))}
     </Container>
   );

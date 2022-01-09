@@ -137,7 +137,7 @@ export default function Aside({ suggestions, categories, getValue, active }) {
           <Title fontSize={h3} textColor={darkBlue2}>
             Roadmap
           </Title>
-          <Link href="/">View</Link>
+          <Link href="/roadmap">View</Link>
         </CardHeader>
         <Spacer height="18px" />
         <List>
