@@ -21,11 +21,9 @@ import { itemCategories, itemStatus } from "../utils";
 const {
   darkBlue2,
   darlBlue3,
-  gray,
   gray3,
   purple,
   purple2,
-  orange,
   orange2,
   white,
   red,
@@ -115,6 +113,7 @@ export default function FeedbackForm({
   handleSubmit,
   getCategory,
   getStatus,
+  deleteFeedback,
 }) {
   const router = useRouter();
 
@@ -157,7 +156,7 @@ export default function FeedbackForm({
               name="title"
               onChange={handleChange}
               className={errors.title && "error"}
-              defaultValue={feedback && values.title}
+              defaultValue={feedback && values?.title}
             />
             {errors.title && <small>{errors.title}</small>}
           </div>
@@ -169,7 +168,7 @@ export default function FeedbackForm({
             <DropdownMenu
               items={itemCategories}
               getValue={getCategory}
-              defaultValue={feedback && values.category}
+              defaultValue={feedback && values?.category}
             />
           </div>
 
@@ -182,7 +181,7 @@ export default function FeedbackForm({
               <DropdownMenu
                 items={itemStatus}
                 getValue={getStatus}
-                defaultValue={feedback && values.status}
+                defaultValue={feedback && values?.status}
               />
             </div>
           )}
@@ -195,17 +194,17 @@ export default function FeedbackForm({
             </small>
             <Spacer height="12px" />
             <TextArea
+              maxLength={120}
               padding="15px 22px"
               height="100px"
               name="description"
               onChange={handleChange}
               className={errors.description && "error"}
-              defaultValue={feedback && values.description}
+              defaultValue={feedback && values?.description}
             />
             {errors.description && <small>{errors.description}</small>}
           </div>
           <Spacer height="40px" />
-
           <div className="button-container">
             <div>
               {feedback && (
@@ -215,12 +214,13 @@ export default function FeedbackForm({
                   textColor={white}
                   fontSize={h4}
                   className="color-button"
+                  onClick={deleteFeedback}
+                  type="button"
                 >
                   Delete
                 </Button>
               )}
             </div>
-
             <Button
               backgroundColor={darkBlue2}
               hoverBackgroundColor={darlBlue3}

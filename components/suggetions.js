@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import Link from "next/link";
+import { useRecoilState } from "recoil";
 import styled from "@emotion/styled";
 // components
 import FeedbackCard from "./feedback-card";
 // utils
 import addVote from "../utils/addVote";
 import { StyleSheet } from "../utils/style-sheet";
+// atoms
+import { feedbacks } from "../recoil/atoms";
 
 const { blue } = StyleSheet;
 
@@ -33,7 +35,8 @@ const Container = styled.div`
   }
 `;
 
-export default function Suggestions({ data, feedbacks, fetchData }) {
+export default function Suggestions({ data }) {
+  const [suggestions, setSuggestions] = useRecoilState(feedbacks);
   return (
     <Container>
       {data.map((feedback) => (
@@ -42,7 +45,7 @@ export default function Suggestions({ data, feedbacks, fetchData }) {
           data={feedback}
           hoverCard
           withLink
-          vote={() => addVote(feedback, feedbacks, fetchData)}
+          vote={() => addVote(feedback, suggestions, setSuggestions)}
         />
       ))}
     </Container>

@@ -5,7 +5,7 @@ export default function ValidateForm(values) {
   }
 
   if (!values.description) {
-    errors.description = "Description is required";
+    errors.description = "Can't be empty";
   } else if (values.description?.length < 6) {
     errors.description = "Description must be at least 6 characters";
   }

@@ -1,14 +1,19 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
 // components
 import Layout from "../../../components/layout";
 import FeedbackForm from "../../../components/feedback-form";
 import ValidateForm from "../../../utils/validate-form";
+import FeedbackNotFound from "../../../components/feedback-not-found";
 // hooks
 import useValidation from "../../../hooks/useValidation";
-import UserContext from "../../../context";
+// atoms
+import { feedbacks as feedbackList } from "../../../recoil/atoms";
 
 export default function EditFeedBack() {
+  const [feedbacks, setFeedbacks] = useRecoilState(feedbackList);
+
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
   const [currentFeedback, setCurrentFeedback] = useState(null);
@@ -20,9 +25,7 @@ export default function EditFeedBack() {
     query: { id },
   } = router;
 
-  const { feedbacks } = useContext(UserContext);
-
-  const addSuggestion = () => {
+  const editFeedBack = () => {
     const newFeedback = {
       title: values.title,
       category: category.toLowerCase(),
@@ -32,29 +35,43 @@ export default function EditFeedBack() {
       upvotes: currentFeedback.upvotes,
       comments: currentFeedback.comments,
     };
-    feedbacks[
-      feedbacks.findIndex((feedback) => feedback.id === currentFeedback.id)
+    const feedbacksCopy = [...feedbacks];
+    feedbacksCopy[
+      feedbacksCopy.findIndex((feedback) => feedback.id === currentFeedback.id)
     ] = newFeedback;
-    window.localStorage.setItem("newData", JSON.stringify(feedbacks));
+    setFeedbacks(feedbacksCopy);
+    window.localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
+    router.back();
+  };
+
+  const deleteFeedback = () => {
+    setLoading(true);
+    const feedbacksCopy = [...feedbacks];
+    const index = feedbacksCopy.findIndex(
+      (feedback) => feedback.id === currentFeedback.id
+    );
+    feedbacksCopy.splice(index, 1);
+    setFeedbacks(feedbacksCopy);
+    window.localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
     router.push("/");
   };
 
   const getFeedback = () => {
     const feedback = feedbacks.find((feedback) => feedback.id === parseInt(id));
     setCurrentFeedback(feedback);
-    setCategory(feedback.category);
-    setStatus(feedback.status);
+    setCategory(feedback?.category);
+    setStatus(feedback?.status);
+    setLoading(false);
   };
 
   useEffect(() => {
     id && getFeedback();
-    currentFeedback && setLoading(false);
-  }, [id, currentFeedback]);
+  }, [id, feedbacks]);
 
   const { values, errors, handleChange, handleSubmit } = useValidation(
     currentFeedback,
     ValidateForm,
-    addSuggestion,
+    editFeedBack,
     currentFeedback
   );
 
@@ -68,7 +85,18 @@ export default function EditFeedBack() {
           feedback={currentFeedback}
           getCategory={setCategory}
           getStatus={setStatus}
+          deleteFeedback={() => deleteFeedback()}
         />
+      )}
+      {!loading && !currentFeedback && (
+        <Layout>
+          <FeedbackNotFound
+            title="This feedback does not exist"
+            description=" Go back and try again"
+            buttonText="Go Back"
+            goBack
+          />
+        </Layout>
       )}
     </Layout>
   );

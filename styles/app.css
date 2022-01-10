@@ -2,7 +2,7 @@ div .color-button {
   display: flex;
   justify-content: center;
   flex-direction: row;
-  padding: 12px 24px;
+  padding: 12px 26px;
   color: var(--white);
 }
 
@@ -48,10 +48,6 @@ body .offcanvas-body > div {
   div .color-button {
     font-size: 13px;
     padding: 10px 20px;
-  }
-  div .color-button:before {
-    /* width: 8px;
-    height: 8px; */
   }
 }
 

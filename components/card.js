@@ -101,7 +101,7 @@ const CardHeader = styled.div`
       hoverTextColor ? `${hoverTextColor}` : lightBlue2};
   }
   & a:hover {
-    color: ${({ textColor }) => (textColor ? `${textColor}` : gray4)};
+    color: ${({ textColor }) => (textColor ? `${textColor}` : lightBlue2)};
   }
   >  span {
     margin-right: 10px!important;
@@ -126,6 +126,9 @@ const CardBody = styled.div`
   grid-template-rows: 1fr;
   grid-column-gap: 30px;
   grid-row-gap: 0px;
+  & p {
+    word-break: break-all;
+  }
   @media (max-width: 767px) {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

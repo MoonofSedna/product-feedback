@@ -138,6 +138,10 @@ const TextArea = styled.textarea`
     color: ${darkBlue2};
     outline: 1px solid ${blue};
   }
+  &.comment-error,
+  &.reply-error {
+    outline: 1px solid ${red};
+  }
   @media (max-width: 768px) {
     font-size: ${textBody3};
   }

@@ -4,7 +4,7 @@ const itemOrder = {
   "most momments": { data: "comments", order: "desc" },
   "least comments": { data: "comments", order: "asc" },
 };
-const itemCategories = ["UI", "UX", "enhancement", "bug", "feature"];
+const itemCategories = ["UI", "UX", "Enhancement", "Bug", "Feature"];
 
 const itemStatus = ["Suggestion", "Planned", "In-Progress", "Live"];
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import Offcanvas from "react-bootstrap/Offcanvas";
+// components
 import { Button } from "./button";
 // icons
 import hamburgerIcon from "../public/images/icon-hamburger.svg";
@@ -27,9 +28,6 @@ const Container = styled.div`
 export default function NavButton({ children }) {
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
   return (
     <Container>
       <Button variant="primary" onClick={() => setShow((p) => !p)}>
@@ -40,7 +38,7 @@ export default function NavButton({ children }) {
         )}
       </Button>
 
-      <Offcanvas show={show} onHide={handleClose} placement="end">
+      <Offcanvas show={show} onHide={() => setShow(false)} placement="end">
         <Offcanvas.Body>{children}</Offcanvas.Body>
       </Offcanvas>
     </Container>

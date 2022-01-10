@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import Link from "next/link";
+// components
 import { Card, CardHeader } from "./card";
 import { List, ListItem } from "./list";
 import { Title, Text } from "./text";
@@ -58,7 +59,7 @@ const Container = styled.div`
     & .aside-card h2 {
       margin: 0;
     }
-    & > .aside-card:nth-child(2) {
+    & > .aside-card:nth-of-type(2) {
       padding: 25px 15px 25px 28px;
     }
 
@@ -101,7 +102,7 @@ const Container = styled.div`
 
 export default function Aside({ suggestions, categories, getValue, active }) {
   const getStatus = (status) => {
-    return suggestions.filter((suggestion) => suggestion.status === status)
+    return suggestions?.filter((suggestion) => suggestion.status === status)
       .length;
   };
 
@@ -145,7 +146,7 @@ export default function Aside({ suggestions, categories, getValue, active }) {
             Planned <Text textColor={gray3}>{getStatus("planned")}</Text>
           </ListItem>
           <ListItem color={purple}>
-            In-Progress{" "}
+            In-Progress
             <Text textColor={gray3}>{getStatus("in-progress")}</Text>
           </ListItem>
           <ListItem color={lightBlue}>

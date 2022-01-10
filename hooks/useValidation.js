@@ -1,7 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 
-const useValidation = (initialState, validate, func, defaultValue) => {
+export default function useValidation(
+  initialState,
+  validate,
+  func,
+  defaultValue
+) {
   const [values, setValues] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [characters, setCharacters] = useState(0);
@@ -17,7 +22,7 @@ const useValidation = (initialState, validate, func, defaultValue) => {
   }, [isSubmitting]);
 
   useEffect(() => {
-    setValues(defaultValue);
+    defaultValue && setValues(defaultValue);
   }, [defaultValue]);
 
   const handleChange = (event) => {
@@ -50,6 +55,4 @@ const useValidation = (initialState, validate, func, defaultValue) => {
     handleBlur,
     resetForm: () => setValues(initialState),
   };
-};
-
-export default useValidation;
+}

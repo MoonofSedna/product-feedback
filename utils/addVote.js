@@ -1,11 +1,10 @@
-const addVote = (currentFeedback, feedbacks, fetchData) => {
+export default function addVote(currentFeedback, feedbacks, fetchData) {
   const { upvotes } = currentFeedback;
-  currentFeedback.upvotes = upvotes + 1;
-  feedbacks[
-    feedbacks.findIndex((feedback) => feedback.id === currentFeedback.id)
-  ] = currentFeedback;
-  fetchData(feedbacks);
-  window.localStorage.setItem("newData", JSON.stringify(feedbacks));
-};
-
-export default addVote;
+  const newFeedback = { ...currentFeedback, upvotes: upvotes + 1 };
+  const feedbacksCopy = [...feedbacks];
+  feedbacksCopy[
+    feedbacksCopy.findIndex((feedback) => feedback.id === newFeedback.id)
+  ] = newFeedback;
+  fetchData(feedbacksCopy);
+  window.localStorage.setItem("feedbacks", JSON.stringify(feedbacksCopy));
+}

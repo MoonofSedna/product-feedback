@@ -1,24 +1,27 @@
 import React, { useContext, useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
 import styled from "@emotion/styled";
 import Layout from "../../components/layout";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 // components
-import { Card, CardBody, CardHeader } from "../../components/card";
+import { Card, CardHeader } from "../../components/card";
 import { Button, TextButton } from "../../components/button";
 import { Title, SubTitle, Text } from "../../components/text";
 import Spacer from "../../components/spacer";
 import FeedbackCard from "../../components/feedback-card";
-import { Form, TextArea } from "../../components/form";
+import { TextArea } from "../../components/form";
+import FeedbackNotFound from "../../components/feedback-not-found";
 // icons
 import ArrowLeft from "../../public/images/icon-arrow-left.svg";
 // utils
 import { StyleSheet } from "../../utils/style-sheet";
+import addVote from "../../utils/addVote";
+// context
 import UserContext from "../../context";
-import ValidateComment from "../../utils/validate-comment";
-// hooks
-import useValidation from "../../hooks/useValidation";
+// atoms
+import { feedbacks as feedbackList } from "../../recoil/atoms";
 
 const {
   darkBlue,
@@ -28,15 +31,16 @@ const {
   purple,
   purple2,
   white,
+  blue,
   lineColor,
   regular,
   semibold,
   bold,
   h3,
   h4,
-  blue,
   textBody3,
   withoutBackground,
+  borderRadius,
 } = StyleSheet;
 
 const Container = styled.div`
@@ -51,33 +55,6 @@ const Container = styled.div`
   }
   & > div:first-of-type {
     margin-bottom: 30px;
-  }
-
-  & > .comments-container {
-    padding: 32px 32px 5px 32px;
-    > div:last-of-type > div {
-      padding: 28px 0 0 0;
-    }
-
-    > div:last-of-type > div:not(:last-of-type) {
-      border-bottom: 1px solid ${lineColor};
-    }
-  }
-
-  & .button-container {
-    display: grid;
-    justify-content: flex-end;
-    align-items: center;
-    grid-template-columns: 1fr repeat(2, auto);
-    grid-template-rows: 1fr;
-    grid-column-gap: 20px;
-    grid-row-gap: 0px;
-    & > div:first-of-type {
-      justify-content: flex-center;
-    }
-    & button {
-      font-size: ${h4};
-    }
   }
   & > .add-comment {
     margin-top: 20px;
@@ -113,12 +90,54 @@ const Container = styled.div`
   @media (max-width: 767px) {
     padding: 25px 20px;
     max-width: 520px;
-    & > .comments-container {
-      padding: 22px;
-    }
   }
   @media (max-width: 340px) {
     padding: 25px 10px;
+  }
+`;
+
+const CommentsContainer = styled.div`
+  padding: 32px 32px 5px 32px;
+  min-height: 100px;
+  background-color: ${white};
+  border-radius: ${borderRadius};
+  > div:last-of-type > div {
+    padding: 28px 0 0 0;
+  }
+
+  > div:last-of-type > div:not(:last-of-type) {
+    border-bottom: 1px solid ${lineColor};
+  }
+
+  @media (max-width: 767px) {
+    padding: 22px;
+    min-height: 70px;
+  }
+`;
+
+const Replies = styled.div`
+  grid-area: 3 / 1 / 4 / 6;
+  margin-left: 19px;
+  & > div {
+    padding: 0 0 5px 22px;
+    border-left: 1px solid ${lineColor};
+  }
+  p {
+    padding: 8px 0 25px 0;
+  }
+  & > div:last-of-type {
+    border: none;
+    padding: 0 0 0 22px;
+  }
+  & > div:last-of-type > div:first-of-type {
+    :before {
+      content: "";
+      position: relative;
+      left: -11px;
+      top: -12px;
+      border-left: 1px solid ${lineColor};
+      width: 20px;
+    }
   }
 `;
 
@@ -143,7 +162,7 @@ const CommentCard = styled.div`
     & > h3 {
       font-size: ${h4};
       font-weight: ${bold};
-      line-height: 18px;
+      line-height: 15px;
       color: ${darkBlue2};
     }
     & > small {
@@ -165,31 +184,6 @@ const CommentCard = styled.div`
     > span {
       color: ${purple};
       font-weight: ${bold};
-    }
-  }
-  & .replies {
-    grid-area: 3 / 1 / 4 / 6;
-    margin-left: 19px;
-    & > div {
-      padding: 0 0 5px 22px;
-      border-left: 1px solid ${lineColor};
-    }
-    p {
-      padding: 8px 0 25px 0;
-    }
-    & > div:last-of-type {
-      border: none;
-      padding: 0 0 0 22px;
-    }
-    & > div:last-of-type > div:first-of-type {
-      :before {
-        content: "";
-        position: relative;
-        left: -11px;
-        top: -12px;
-        border-left: 1px solid ${lineColor};
-        width: 20px;
-      }
     }
   }
   & > form {
@@ -244,17 +238,15 @@ const RepliesLine = styled.div`
 `;
 
 export default function Suggestion() {
+  const [feedbacks, setFeedbacks] = useRecoilState(feedbackList);
+
   const [currentFeedback, setCurrentFeedback] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState({ show: false, id: null });
   const [replyingTo, setReplyingTo] = useState(null);
   const [currentComment, setCurrentComment] = useState(null);
-  const [isAComment, setIsAComment] = useState(false);
-
-  const initialState = {
-    comment: "",
-    reply: "",
-  };
+  const [message, setMessage] = useState({});
+  const [characters, setCharacters] = useState(0);
 
   const router = useRouter();
 
@@ -262,76 +254,90 @@ export default function Suggestion() {
     query: { id },
   } = router;
 
-  const { feedbacks, user } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
-  const addtoLocalStorage = () => {
-    if (currentComment) {
-      currentFeedback.comments[
-        currentFeedback.comments.findIndex(
-          (comment) => comment.id === currentComment.id
-        )
-      ] = currentComment;
-    }
-    feedbacks[feedbacks.findIndex((feedback) => feedback.id === id)] =
-      currentFeedback;
-    window.localStorage.setItem("newData", JSON.stringify(feedbacks));
+  const addToLocalStorage = (comment) => {
+    const data = [...feedbacks];
+    const newFeedback = {
+      ...currentFeedback,
+      comments: comment,
+    };
+    setCurrentFeedback(newFeedback);
+    data[data.findIndex((feedback) => feedback.id === newFeedback.id)] =
+      newFeedback;
+    setFeedbacks(data);
+    window.localStorage.setItem("feedbacks", JSON.stringify(data));
+    setMessage({});
+    setCharacters(0);
   };
 
-  const addComment = () => {
+  const addComment = (e) => {
+    e.preventDefault();
     const newComment = {
-      content: values.comment,
+      content: message.comment,
       id: `comment-${currentFeedback.comments.length + 1}`,
       user: user,
     };
+    if (!message.comment) {
+      return;
+    }
+    const comment = [...currentFeedback.comments, newComment];
+    addToLocalStorage(comment);
+    e.target.reset();
+  };
 
+  const addReply = (e) => {
+    e.preventDefault();
+    if (!message.reply) {
+      return;
+    }
     const newReply = {
-      content: values.reply,
+      content: message.reply,
       replyingTo: replyingTo,
       user: user,
       id: `reply-${currentComment?.replies?.length + 1}`,
     };
-
-    if (isAComment) {
-      currentFeedback.comments.push(newComment);
-      addtoLocalStorage();
-      setIsAComment(false);
-    } else {
-      if (currentComment.replies) {
-        currentComment.replies?.push(newReply);
-        addtoLocalStorage();
-      } else {
-        currentComment.replies = [newReply];
-        addtoLocalStorage();
-      }
-    }
+    const reply = currentComment.replies
+      ? [...currentComment.replies, newReply]
+      : [newReply];
+    const newComments = { ...currentComment, replies: reply };
+    const comment = [...currentFeedback.comments];
+    comment[comment.findIndex((feedback) => feedback.id === newComments.id)] =
+      newComments;
+    setCurrentComment(newComments);
+    addToLocalStorage(comment);
+    e.target.reset();
   };
-
-  const { values, errors, characters, handleChange, handleSubmit } =
-    useValidation(initialState, ValidateComment, addComment);
 
   const getFeedback = () => {
     const feedback = feedbacks.find((feedback) => feedback.id === parseInt(id));
     setCurrentFeedback(feedback);
-    feedback && setLoading(false);
+    setLoading(false);
   };
 
   useEffect(() => {
     if (showForm) {
       setShowForm((p) => ({ ...showForm, show: true }));
     }
+    setMessage({});
   }, [showForm.id]);
 
   useEffect(() => {
     id && getFeedback();
-  }, [id]);
+  }, [id, feedbacks]);
+
+  const handleChange = (e, type) => {
+    setMessage({ [e.target.name]: e.target.value });
+    type === "comment" && setCharacters(e.target.value.length);
+  };
 
   const commentForm = ({ typeComment }) => (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={(e) => (typeComment ? addComment(e) : addReply(e))}>
       <TextArea
         height="80px"
         autoFocus={typeComment ? false : true}
         name={typeComment ? "comment" : "reply"}
-        onChange={handleChange}
+        onChange={(e) => handleChange(e, typeComment ? "comment" : "reply")}
         maxLength={250}
       />
       <div>
@@ -345,7 +351,6 @@ export default function Suggestion() {
           fontSize={h4}
           className="color-button"
           type="submit"
-          onClick={() => typeComment && setIsAComment(true)}
         >
           Post {typeComment ? "Comment" : "Reply"}
         </Button>
@@ -365,7 +370,6 @@ export default function Suggestion() {
             objectFit="contain"
           />
         </div>
-
         <div className="card-content">
           <SubTitle textColor={darkBlue}>{reply.user.name}</SubTitle>
           <small>@{reply.user.username}</small>
@@ -402,31 +406,35 @@ export default function Suggestion() {
   return (
     <Layout>
       <Container>
-        <CardHeader backgroundColor={withoutBackground}>
-          <TextButton
-            fontSize={h4}
-            fontWeight={bold}
-            textColor={gray3}
-            onClick={() => router.back()}
-            icon={ArrowLeft.src}
-          >
-            Go Back
-          </TextButton>
-          <Link href={`${id}/edit-feedback`} passHref>
-            <Button
-              className="color-button"
-              backgroundColor={blue}
-              hoverBackgroundColor={blue2}
-            >
-              Edit Feedback
-            </Button>
-          </Link>
-        </CardHeader>
-        {!loading && (
+        {!loading && currentFeedback && (
           <>
-            <FeedbackCard data={currentFeedback} />
+            <CardHeader backgroundColor={withoutBackground}>
+              <TextButton
+                fontSize={h4}
+                fontWeight={bold}
+                textColor={gray3}
+                onClick={() => router.back()}
+                icon={ArrowLeft.src}
+              >
+                Go Back
+              </TextButton>
+              <Link href={`${id}/edit-feedback`} passHref>
+                <Button
+                  className="color-button"
+                  backgroundColor={blue}
+                  hoverBackgroundColor={blue2}
+                >
+                  Edit Feedback
+                </Button>
+              </Link>
+            </CardHeader>
+
+            <FeedbackCard
+              data={currentFeedback}
+              vote={() => addVote(currentFeedback, feedbacks, setFeedbacks)}
+            />
             <Spacer height="20px" />
-            <Card className="comments-container">
+            <CommentsContainer>
               <CardHeader backgroundColor={withoutBackground}>
                 <Title
                   textColor={darkBlue}
@@ -473,11 +481,11 @@ export default function Suggestion() {
                     {comment.replies?.length > 0 && <RepliesLine />}
                     <Text textColor={gray3}>{`${comment.content}`}</Text>
                     {comment.replies?.length > 0 && (
-                      <div className="replies">
+                      <Replies>
                         {comment.replies.map((reply) =>
                           replyCard(reply, comment)
                         )}
-                      </div>
+                      </Replies>
                     )}
                     {showForm.show &&
                       showForm.id === comment.id &&
@@ -485,7 +493,7 @@ export default function Suggestion() {
                   </CommentCard>
                 ))}
               </div>
-            </Card>
+            </CommentsContainer>
             <Card className="add-comment">
               <CardHeader backgroundColor={withoutBackground}>
                 <Title textColor={darkBlue}>Add Comment</Title>
@@ -493,6 +501,16 @@ export default function Suggestion() {
               {commentForm({ typeComment: true })}
             </Card>
           </>
+        )}
+        {!loading && !currentFeedback && (
+          <Layout>
+            <FeedbackNotFound
+              title="This feedback does not exist"
+              description=" Go back and try again"
+              buttonText="Go Back"
+              goBack
+            />
+          </Layout>
         )}
       </Container>
     </Layout>

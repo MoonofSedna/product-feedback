@@ -1,31 +1,32 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // components
-import { Card, CardHeader, CardBody } from "../components/card";
+import { Card, CardHeader } from "../components/card";
 import { Button, TextButton } from "../components/button";
 import { Text, Title } from "../components/text";
 import Tag from "../components/tag";
 import Layout from "../components/layout";
 // utils
 import { StyleSheet } from "../utils/style-sheet";
+import addVote from "../utils/addVote";
 // icons
 import Plus from "../public/images/icon-plus.svg";
 import ArrowLeft from "../public/images/white-arrow-left-icon.svg";
 import ArrowUpIcon from "../public/images/icon-arrow-up.svg";
 import ArrowUpIconHover from "../public/images/ArrowWhite.svg";
 import CommentIcon from "../public/images/icon-comments.svg";
-// context
-import UserContext from "../context";
+// atoms
+import { feedbacks as feedbackList } from "../recoil/atoms";
 // hooks
 import useScreenSize from "../hooks/useScreenSize";
 
 const {
   darkBlue,
   darkBlue2,
-  blue2,
   gray3,
   purple,
   purple2,
@@ -33,8 +34,6 @@ const {
   orange,
   lightBlue,
   lineColor,
-  regular,
-  semibold,
   bold,
   h3,
   h4,
@@ -46,8 +45,7 @@ const {
 
 const Container = styled.div`
   width: 100%;
-  max-width: 1200px;
-  padding: 0 40px;
+  max-width: 1100px;
   & .card-header-cs {
     display: flex;
     align-items: center;
@@ -58,84 +56,96 @@ const Container = styled.div`
       flex-direction: column;
     }
   }
-  & .cards-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: 1fr;
-    grid-column-gap: 20px;
-    grid-row-gap: 20px;
+  @media (max-width: 1024px) {
+    padding: 0 0 30px 0;
   }
-  & .card-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, 1fr);
-    grid-column-gap: 20px;
-    grid-row-gap: 20px;
+  @media (max-width: 767px) {
+    & .card-header-cs {
+      border-radius: 0;
+      padding: 20px;
+    }
+  }
+`;
 
-    & .card-content {
+const CardGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  aling-items: flex-start;
+  & .card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 25px 30px;
+    border-radius: 5px;
+    :not(:last-of-type) {
+      margin-bottom: 20px;
+    }
+    h2 {
+      cursor: pointer;
+      line-height: 20px;
+      :hover {
+        color: ${blue};
+      }
+    }
+    h2,
+    > div > p {
+      margin-bottom: 10px;
+    }
+    > div:first-of-type p:first-of-type {
+      color: ${gray3};
+      text-transform: capitalize;
+      ::before {
+        content: "\u25CF";
+        padding-right: 20px;
+      }
+    }
+    > div:last-of-type {
       display: flex;
-      flex-direction: column;
       justify-content: space-between;
-      h2 {
-        cursor: pointer;
-        :hover {
-          color: ${blue};
+      width: 100%;
+      padding: 5px 0;
+      > button {
+        flex-direction: row;
+        padding: 8px 18px;
+        color: ${darkBlue2};
+        :focus,
+        :active {
+          color: ${white};
         }
-      }
-      h2,
-      > div > p {
-        margin-bottom: 10px;
-      }
-      > div:first-of-type p:first-of-type {
-        color: ${gray3};
-        text-transform: capitalize;
         ::before {
-          content: "\u25CF";
-          padding-right: 20px;
-        }
-      }
-      > div:last-of-type {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        > button {
-          flex-direction: row;
-          padding: 8px 18px;
-          color: ${darkBlue2};
-          ::before {
-            margin-right: 8px;
-          }
+          margin-right: 8px;
         }
       }
     }
-    & .planned {
-      border-top: 5px solid ${orange};
-      p:before {
-        color: ${orange};
-      }
+  }
+  & .planned {
+    border-top: 5px solid ${orange};
+    p:before {
+      color: ${orange};
     }
-    & .in-progress {
-      border-top: 5px solid ${purple};
-      p:before {
-        color: ${purple};
-      }
+  }
+  & .in-progress {
+    border-top: 5px solid ${purple};
+    p:before {
+      color: ${purple};
     }
-    & .live {
-      border-top: 5px solid ${lightBlue};
-      p:before {
-        color: ${lightBlue};
-      }
+  }
+  & .live {
+    border-top: 5px solid ${lightBlue};
+    p:before {
+      color: ${lightBlue};
     }
   }
   @media (max-width: 1024px) {
-    padding: 0 0 30px 0;
-    .card-content h2,
-    .card-content p {
-      font-size: ${textBody3};
-      line-height: 18px;
+    & .card-content:not(:last-of-type) {
+      margin-bottom: 15px;
     }
-
-    .card-grid .card-content {
+    & .card-content h2,
+    & .card-content p {
+      font-size: ${textBody3};
+      line-height: 15px;
+    }
+    &.card-content {
       div:first-of-type p:first-of-type {
         &::before {
           padding-right: 10px;
@@ -143,25 +153,33 @@ const Container = styled.div`
       }
     }
   }
+`;
+
+const CardsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  @media (max-width: 1024px) {
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+  }
   @media (max-width: 767px) {
-    & .cards-container {
-      display: grid;
-      grid-template-columns: 1fr;
-      grid-template-rows: 1fr;
-      grid-row-gap: 20px;
-      padding: 0 20px;
-      > div h2 {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 20px;
+    > div:first-of-type {
+      margin-bottom: 20px;
+      h2 {
         color: ${darkBlue2};
         font-size: ${h3};
       }
-      > div p {
+      p {
         color: ${gray3};
         font-size: ${textBody3};
       }
-    }
-    & .card-header-cs {
-      border-radius: 0;
-      padding: 20px;
     }
   }
 `;
@@ -184,14 +202,12 @@ const CardStatusHeader = styled.div`
       font-size: ${textBody};
     }
   }
-
   @media (max-width: 1024px) {
     > div > h2,
     > div > p {
       font-size: ${h4};
     }
   }
-
   @media (max-width: 767px) {
     border-bottom: 1px solid ${lineColor};
     padding: 0 20px;
@@ -221,9 +237,10 @@ const CardStatusHeader = styled.div`
 `;
 
 export default function Roadmap() {
+  const [feedbacks, setFeedbacks] = useRecoilState(feedbackList);
+
   const [feedbackType, setFeedbackType] = useState({});
   const [currentStatus, setCurrentStatus] = useState(null);
-  const { user, feedbacks } = useContext(UserContext);
 
   const router = useRouter();
 
@@ -292,6 +309,7 @@ export default function Roadmap() {
           minWidth="45px"
           icon={ArrowUpIcon.src}
           iconHover={ArrowUpIconHover.src}
+          onClick={() => addVote(item, feedbacks, setFeedbacks)}
         >
           {item.upvotes}
         </Button>
@@ -317,7 +335,7 @@ export default function Roadmap() {
           <CardHeader
             padding="25px"
             display="grid"
-            gridTemplateColumns="auto 1fr auto"
+            gridTemplateColumns="1fr 1fr"
             backgroundColor={darkBlue}
             className="card-header-cs"
           >
@@ -349,14 +367,14 @@ export default function Roadmap() {
           <CardStatusHeader>
             {Object.keys(feedbackType).map((status) => {
               const data = feedbackType[status];
-              console.log(data);
               return (
                 <div
                   key={status}
                   className={
-                    mobile &&
-                    currentStatus?.title.toLowerCase() === status &&
-                    `${status}`
+                    mobile
+                      ? currentStatus?.title.toLowerCase() === status &&
+                        `${status}`
+                      : ""
                   }
                 >
                   <Title
@@ -372,42 +390,31 @@ export default function Roadmap() {
             })}
           </CardStatusHeader>
 
-          <Card
-            className="cards-container"
-            backgroundColor={withoutBackground}
-            padding="0"
-          >
+          <CardsContainer backgroundColor={withoutBackground} padding="0">
             {mobile ? (
               <>
                 <div>
                   <Title>{`${currentStatus?.title} (${currentStatus?.data.length})`}</Title>
                   <Text>{currentStatus?.description}</Text>
                 </div>
-                <Card
+                <CardGrid
                   key={currentStatus}
-                  className="card-grid"
-                  padding="0"
                   backgroundColor={withoutBackground}
                 >
                   {currentStatus?.data.map((item) => card(item))}
-                </Card>
+                </CardGrid>
               </>
             ) : (
               Object.keys(feedbackType).map((status) => {
                 const data = feedbackType[status].data;
                 return (
-                  <Card
-                    key={data.id}
-                    className="card-grid"
-                    padding="0"
-                    backgroundColor={withoutBackground}
-                  >
+                  <CardGrid key={status} backgroundColor={withoutBackground}>
                     {data.map((item) => card(item))}
-                  </Card>
+                  </CardGrid>
                 );
               })
             )}
-          </Card>
+          </CardsContainer>
         </Card>
       </Container>
     </Layout>

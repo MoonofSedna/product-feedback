@@ -64,8 +64,8 @@ const Button = styled.button`
     background-image: url(${({ icon }) => `${icon}`});
     background-repeat: no-repeat;
     background-size: contain;
-    height: ${({ icon }) => icon && "10px"};
-    width: ${({ icon }) => icon && "10px"};
+    height: ${({ icon }) => icon && "9px"};
+    width: ${({ icon }) => icon && "9px"};
   }
   &:active:before,
   :focus:before {
@@ -75,8 +75,8 @@ const Button = styled.button`
       iconHover ? `${iconHover}` : `${icon}`});
     background-repeat: no-repeat;
     background-size: contain;
-    height: ${({ icon }) => icon && "10px"};
-    width: ${({ icon }) => icon && "10px"};
+    height: ${({ icon }) => icon && "9px"};
+    width: ${({ icon }) => icon && "9px"};
   }
   & img {
     margin: 0 5px;
@@ -105,8 +105,8 @@ const TextButton = styled.button`
     background-image: url(${({ icon }) => `${icon}`});
     background-repeat: no-repeat;
     background-size: contain;
-    height: ${({ icon }) => icon && "10px"};
-    width: ${({ icon }) => icon && "10px"};
+    height: ${({ icon }) => icon && "9px"};
+    width: ${({ icon }) => icon && "9px"};
     position: absolute;
     left: 0;
     top: 9px;

@@ -3,8 +3,10 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styled from "@emotion/styled";
-import { StyleSheet } from "../utils/style-sheet";
+// components
 import { Text } from "./text";
+// utils
+import { StyleSheet } from "../utils/style-sheet";
 // icon
 import Check from "../public/images/icon-check.svg";
 import ArrowDown from "../public/images/arrow-down-white.svg";
@@ -113,6 +115,9 @@ const Container = styled.div`
       width: 14px;
     }
   }
+  & .uppercase > button {
+    text-transform: uppercase;
+  }
   @media (max-width: 767px) {
     & button,
     & p {
@@ -150,7 +155,13 @@ export default function DropdownMenu({
           {title}
         </Text>
       )}
-      <DropdownButton title={currentValue} onSelect={handleSelect}>
+      <DropdownButton
+        title={currentValue}
+        onSelect={handleSelect}
+        className={
+          (currentValue === "ui" || currentValue === "ux") && "uppercase"
+        }
+      >
         {objectWithKey
           ? Object.keys(items).map((item) => (
               <Dropdown.Item

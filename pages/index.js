@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState } from "react";
+import { useRecoilState } from "recoil";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import Image from "next/image";
 // components
 import Layout from "../components/layout";
-import { Card, CardHeader, CardBody } from "../components/card";
+import { Card, CardHeader } from "../components/card";
 import { Button } from "../components/button";
 import { Title, SubTitle } from "../components/text";
 import Aside from "../components/aside";
 import Suggestions from "../components/suggetions";
 import Spacer from "../components/spacer";
 import DropdownButton from "../components/dropdown";
+import FeedbackNotFound from "../components/feedback-not-found";
 // images
 import SuggestionsIcon from "../public/images/icon-suggestions.svg";
 import Plus from "../public/images/icon-plus.svg";
@@ -18,8 +20,8 @@ import Empty from "../public/images/illustration-empty.svg";
 // utils
 import { StyleSheet } from "../utils/style-sheet";
 import { itemOrder, itemCategories } from "../utils";
-// context
-import UserContext from "../context";
+// atoms
+import { feedbacks } from "../recoil/atoms";
 
 const {
   darkBlue,
@@ -71,9 +73,8 @@ const Container = styled.div`
 `;
 
 export default function Home() {
-  const { feedbacks, setFeedbacks } = useContext(UserContext);
+  const [suggestions] = useRecoilState(feedbacks);
 
-  const [suggestions, setSuggestions] = useState(feedbacks);
   const [filterBy, setFilterBy] = useState("all");
   const [sortBy, setSortBy] = useState(Object.keys(itemOrder)[0]);
 
@@ -155,55 +156,65 @@ export default function Home() {
             </Link>
           </CardHeader>
           {filterSuggestions().length > 0 ? (
-            <Suggestions
-              data={filterSuggestions()}
-              feedbacks={feedbacks}
-              fetchData={setFeedbacks}
-            />
+            <Suggestions data={filterSuggestions()} feedbacks={feedbacks} />
           ) : (
-            <Card
-              margin="20px 0"
-              minHeight="100%"
-              display="flex"
-              justifyContent="center"
-              alingItem="center"
-            >
-              <Image
-                src={Empty}
-                alt="comment"
-                width="130px"
-                height="137px"
-                objectFit="contain"
-              />
-              <Spacer height="40px" />
-              <Title align="center" textColor={darkBlue2} fontSize={h1}>
-                There is no feedback yet.
-              </Title>
-              <Spacer height="20px" />
-              <SubTitle
-                textColor={gray3}
-                align="center"
-                fontWeight={regular}
-                fontSize={textBody}
-              >
-                Got a suggestion? Found a bug that needs to be squashed?
-                <br></br>
-                We love hearing about new ideas to improve our app.
-              </SubTitle>
-              <Spacer height="20px" />
-              <Link href="/add-feedback" passHref>
-                <Button
-                  backgroundColor={purple}
-                  hoverBackgroundColor={purple2}
-                  textColor={white}
-                  fontSize={h4}
-                  icon={Plus.src}
-                  className="color-button"
-                >
-                  Add Feedback
-                </Button>
-              </Link>
-            </Card>
+            <FeedbackNotFound
+              title="There is no feedback yet."
+              description={
+                <>
+                  <p>
+                    Got a suggestion? Found a bug that needs to be squashed?
+                  </p>
+                  <p> We love hearing about new ideas to improve our app.</p>
+                </>
+              }
+              buttonText="Add Feedback"
+              buttonIcon={Plus}
+              backgroundColor={white}
+            />
+            // <Card
+            //   margin="20px 0"
+            //   minHeight="100%"
+            //   display="flex"
+            //   justifyContent="center"
+            //   alingItem="center"
+            // >
+            //   <Image
+            //     src={Empty}
+            //     alt="comment"
+            //     width="130px"
+            //     height="137px"
+            //     objectFit="contain"
+            //   />
+            //   <Spacer height="40px" />
+            //   <Title align="center" textColor={darkBlue2} fontSize={h1}>
+            //     There is no feedback yet.
+            //   </Title>
+            //   <Spacer height="20px" />
+            //   <SubTitle
+            //     textColor={gray3}
+            //     align="center"
+            //     fontWeight={regular}
+            //     fontSize={textBody}
+            //   >
+            //     Got a suggestion? Found a bug that needs to be squashed?
+            //     <br></br>
+            //     We love hearing about new ideas to improve our app.
+            //   </SubTitle>
+            //   <Spacer height="20px" />
+            //   <Link href="/add-feedback" passHref>
+            //     <Button
+            //       backgroundColor={purple}
+            //       hoverBackgroundColor={purple2}
+            //       textColor={white}
+            //       fontSize={h4}
+            //       icon={Plus.src}
+            //       className="color-button"
+            //     >
+            //       Add Feedback
+            //     </Button>
+            //   </Link>
+            // </Card>
           )}
         </Card>
       </Container>
