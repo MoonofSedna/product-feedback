@@ -1,8 +1,8 @@
 /// <reference types="Cypress" />
 
 describe("<SuggestionsFilter/>", () => {
-  it("<SuggestionsFilter/> - Verify that suggestions filter work propertly", () => {
-    // visit home page
+  it("<SuggestionsFilter/> - Verify that suggestion's filter work properly", () => {
+    // Visit the home page
     cy.visit("/");
 
     // Verify that the list exist

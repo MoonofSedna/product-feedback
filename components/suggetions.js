@@ -6,8 +6,6 @@ import FeedbackCard from "./feedback-card";
 // utils
 import addVote from "../utils/addVote";
 import { StyleSheet } from "../utils/style-sheet";
-// atoms
-import { feedbacks } from "../recoil/atoms";
 
 const { blue } = StyleSheet;
 
@@ -36,7 +34,6 @@ const Container = styled.div`
 `;
 
 export default function Suggestions({ data, feedbacks, setFeedbacks }) {
-  // const [suggestions, setSuggestions] = useRecoilState(feedbacks);
   return (
     <Container data-cy="suggestion-list">
       {data.map((feedback) => (

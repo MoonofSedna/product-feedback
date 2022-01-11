@@ -1,4 +1,4 @@
-import { user, feedbacks } from "../recoil/atoms";
+import { feedbacks } from "../recoil/atoms";
 
 export const keysAbleToSave = ["feedbacks"];
 

@@ -3,7 +3,7 @@ import { RecoilRoot } from "recoil";
 import { SSRProvider } from "react-bootstrap";
 import Head from "next/head";
 import UserContext from "../context";
-import JSONData from "../public/data.json";
+import JSONData from "../utils/data.json";
 // utils
 import { initRecoilState } from "../utils/initState";
 
@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(null);
 
   const getData = async () => {
-    const staticData = await JSONData;
+    const staticData = JSONData;
     setUser(staticData.currentUser);
   };
 

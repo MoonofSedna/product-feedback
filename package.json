@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:e2e": "cypress run --browser chrome"
   },
   "dependencies": {
     "@babel/core": "^7.16.7",

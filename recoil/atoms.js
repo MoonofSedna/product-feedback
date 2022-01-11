@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import DataJSON from "../public/data.json";
+import DataJSON from "../utils/data.json";
 
 export const feedbacks = atom({
   key: "feedbacks",

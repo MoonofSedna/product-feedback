@@ -326,7 +326,7 @@ export default function Suggestion() {
 
   useEffect(() => {
     if (showForm) {
-      setShowForm((p) => ({ ...showForm, show: true }));
+      setShowForm(() => ({ ...showForm, show: true }));
     }
     setMessage({});
     setErrors({});
@@ -394,7 +394,7 @@ export default function Suggestion() {
             fontWeight={semibold}
             textColor={blue}
             onClick={() => {
-              setShowForm((p) => ({
+              setShowForm(() => ({
                 show: !showForm.show,
                 id: `comment${comment.id}-${reply.id}`,
               }));
@@ -483,7 +483,7 @@ export default function Suggestion() {
                         textColor={blue}
                         data-cy="reply-toggle"
                         onClick={() => {
-                          setShowForm((p) => ({
+                          setShowForm(() => ({
                             show: !showForm.show,
                             id: comment.id,
                           }));

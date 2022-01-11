@@ -1,8 +1,8 @@
 /// <reference types="Cypress" />
 
-describe("<FeedbackList/>", () => {
-  it("<FeedbackList/> - Verify the that filter work properly", () => {
-    // visit home page
+describe("<FeedbackFeatures/>", () => {
+  it("<FeedbackFeatures/> - Verify that feedback's flow (vote, edit, delete) work correctly", () => {
+    // visit the home page
     cy.visit("/");
 
     // Verify that the list exist
@@ -17,7 +17,7 @@ describe("<FeedbackList/>", () => {
 
     cy.url().should("include", "/feedback/");
 
-    // Vote
+    // Add vote
 
     cy.get("[data-cy=vote-button]")
       .should("exist")
