@@ -27,6 +27,7 @@ export default function FeedbackCard({ data, hoverCard, vote, withLink }) {
             icon={ArrowUpIcon.src}
             iconHover={ArrowUpIconHover.src}
             onClick={vote}
+            data-cy="vote-button"
           >
             {data.upvotes}
           </Button>
@@ -34,7 +35,11 @@ export default function FeedbackCard({ data, hoverCard, vote, withLink }) {
         <div>
           {withLink ? (
             <Link href={`feedback/${data.id}`} passHref>
-              <Title fontSize={h3} textColor={darkBlue2}>
+              <Title
+                fontSize={h3}
+                textColor={darkBlue2}
+                data-cy="feedback-title"
+              >
                 {data.title}
               </Title>
             </Link>

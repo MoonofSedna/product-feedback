@@ -61,7 +61,7 @@ const Button = styled.button`
   &:before {
     content: "";
     // icon
-    background-image: url(${({ icon }) => `${icon}`});
+    background-image: url(${({ icon }) => icon && `${icon}`});
     background-repeat: no-repeat;
     background-size: contain;
     height: ${({ icon }) => icon && "9px"};
@@ -72,7 +72,7 @@ const Button = styled.button`
     content: "";
     // icon
     background-image: url(${({ iconHover, icon }) =>
-      iconHover ? `${iconHover}` : `${icon}`});
+      iconHover ? `${iconHover}` : icon ? `${icon}` : ""});
     background-repeat: no-repeat;
     background-size: contain;
     height: ${({ icon }) => icon && "9px"};
@@ -102,7 +102,7 @@ const TextButton = styled.button`
   &:before {
     content: "";
     // icon
-    background-image: url(${({ icon }) => `${icon}`});
+    background-image: url(${({ icon }) => icon && `${icon}`});
     background-repeat: no-repeat;
     background-size: contain;
     height: ${({ icon }) => icon && "9px"};

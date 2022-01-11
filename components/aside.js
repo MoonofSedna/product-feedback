@@ -67,7 +67,7 @@ const Container = styled.div`
       margin: 0 8px 12px 0;
     }
     & > div:first-of-type {
-      background: url(${backgroundTablet.src});
+      background-image: url(${backgroundTablet.src});
       background-size: cover;
     }
   }
@@ -76,7 +76,7 @@ const Container = styled.div`
     grid-template-rows: 1fr;
 
     & > div:first-of-type {
-      background: url(${backgroundMobile.src});
+      background-image: url(${backgroundMobile.src});
       background-size: cover;
       display: flex;
       flex-direction: row;
@@ -108,7 +108,7 @@ export default function Aside({ suggestions, categories, getValue, active }) {
 
   const cards = (
     <>
-      <Card className="aside-card">
+      <Card className="aside-card" data-cy="filter-by">
         <Button
           className={active === "all" && "active-button"}
           key="all"

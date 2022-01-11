@@ -1,0 +1,10 @@
+{
+    "baseUrl": "http://localhost:3000/", 
+    "viewportWidth": 1200,
+    "viewportHeight": 1200,
+    "testFiles": [
+        "add-feedback.spec.js",
+        "suggestions-filter.spec.js",
+        "feedback-features.spec.js"
+      ]
+}

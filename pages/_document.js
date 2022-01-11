@@ -6,7 +6,6 @@ class MyDocument extends Document {
       <Html lang="en">
         <title>Product Feedback</title>
         <Head>
-          <link rel="icon" href="/favicon.ico" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link
             rel="preconnect"

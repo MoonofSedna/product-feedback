@@ -22,7 +22,7 @@ const Card = styled.div`
   justify-content: ${({ justifyContent }) =>
     justifyContent ? justifyContent : flexStart};
   // background
-  background-image: url(${({ background }) => `${background}`});
+  background-image: url(${({ background }) => background && `${background}`});
   background-color: ${({ backgroundColor }) =>
     backgroundColor ? `${backgroundColor}` : white};
   background-size: cover;

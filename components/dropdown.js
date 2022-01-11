@@ -132,6 +132,7 @@ export default function DropdownMenu({
   getValue,
   objectWithKey,
   defaultValue,
+  data,
 }) {
   const [currentValue, setCurrentValue] = useState(
     objectWithKey ? Object.keys(items)[0] : items[0]
@@ -156,6 +157,7 @@ export default function DropdownMenu({
         </Text>
       )}
       <DropdownButton
+        data-cy={data}
         title={currentValue}
         onSelect={handleSelect}
         className={

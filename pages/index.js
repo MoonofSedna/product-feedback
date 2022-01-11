@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import styled from "@emotion/styled";
 import Link from "next/link";
@@ -7,36 +7,22 @@ import Image from "next/image";
 import Layout from "../components/layout";
 import { Card, CardHeader } from "../components/card";
 import { Button } from "../components/button";
-import { Title, SubTitle } from "../components/text";
+import { Title } from "../components/text";
 import Aside from "../components/aside";
 import Suggestions from "../components/suggetions";
-import Spacer from "../components/spacer";
 import DropdownButton from "../components/dropdown";
 import FeedbackNotFound from "../components/feedback-not-found";
 // images
 import SuggestionsIcon from "../public/images/icon-suggestions.svg";
 import Plus from "../public/images/icon-plus.svg";
-import Empty from "../public/images/illustration-empty.svg";
 // utils
 import { StyleSheet } from "../utils/style-sheet";
 import { itemOrder, itemCategories } from "../utils";
 // atoms
 import { feedbacks } from "../recoil/atoms";
 
-const {
-  darkBlue,
-  darkBlue2,
-  gray3,
-  purple,
-  purple2,
-  white,
-  regular,
-  h1,
-  h3,
-  h4,
-  textBody,
-  withoutBackground,
-} = StyleSheet;
+const { darkBlue, purple, purple2, white, h3, h4, withoutBackground } =
+  StyleSheet;
 
 const Container = styled.div`
   width: 100%;
@@ -73,10 +59,11 @@ const Container = styled.div`
 `;
 
 export default function Home() {
-  const [suggestions] = useRecoilState(feedbacks);
+  const [suggestions, setSuggestions] = useRecoilState(feedbacks);
 
   const [filterBy, setFilterBy] = useState("all");
   const [sortBy, setSortBy] = useState(Object.keys(itemOrder)[0]);
+  const [filteredData, setFilteredData] = useState([]);
 
   const suggestionsLength = suggestions.filter(
     (item) => item.status === "suggestion"
@@ -107,8 +94,12 @@ export default function Home() {
         return item.category === filterBy;
       }
     });
-    return filterData;
+    setFilteredData(filterData);
   };
+
+  useEffect(() => {
+    filterSuggestions();
+  }, [sortBy, filterBy, suggestions]);
 
   return (
     <Layout>
@@ -141,6 +132,7 @@ export default function Home() {
               items={itemOrder}
               getValue={(value) => setSortBy(value)}
               objectWithKey
+              data="sort-by"
             />
             <Link href="/add-feedback" passHref>
               <Button
@@ -155,8 +147,12 @@ export default function Home() {
               </Button>
             </Link>
           </CardHeader>
-          {filterSuggestions().length > 0 ? (
-            <Suggestions data={filterSuggestions()} feedbacks={feedbacks} />
+          {filteredData.length > 0 ? (
+            <Suggestions
+              data={filteredData}
+              feedbacks={suggestions}
+              setFeedbacks={setSuggestions}
+            />
           ) : (
             <FeedbackNotFound
               title="There is no feedback yet."
@@ -172,49 +168,6 @@ export default function Home() {
               buttonIcon={Plus}
               backgroundColor={white}
             />
-            // <Card
-            //   margin="20px 0"
-            //   minHeight="100%"
-            //   display="flex"
-            //   justifyContent="center"
-            //   alingItem="center"
-            // >
-            //   <Image
-            //     src={Empty}
-            //     alt="comment"
-            //     width="130px"
-            //     height="137px"
-            //     objectFit="contain"
-            //   />
-            //   <Spacer height="40px" />
-            //   <Title align="center" textColor={darkBlue2} fontSize={h1}>
-            //     There is no feedback yet.
-            //   </Title>
-            //   <Spacer height="20px" />
-            //   <SubTitle
-            //     textColor={gray3}
-            //     align="center"
-            //     fontWeight={regular}
-            //     fontSize={textBody}
-            //   >
-            //     Got a suggestion? Found a bug that needs to be squashed?
-            //     <br></br>
-            //     We love hearing about new ideas to improve our app.
-            //   </SubTitle>
-            //   <Spacer height="20px" />
-            //   <Link href="/add-feedback" passHref>
-            //     <Button
-            //       backgroundColor={purple}
-            //       hoverBackgroundColor={purple2}
-            //       textColor={white}
-            //       fontSize={h4}
-            //       icon={Plus.src}
-            //       className="color-button"
-            //     >
-            //       Add Feedback
-            //     </Button>
-            //   </Link>
-            // </Card>
           )}
         </Card>
       </Container>

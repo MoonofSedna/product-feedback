@@ -32,6 +32,7 @@ const {
   purple2,
   white,
   blue,
+  red,
   lineColor,
   regular,
   semibold,
@@ -73,6 +74,10 @@ const Container = styled.div`
     button {
       margin-top: 5px;
     }
+  }
+  & .comment-error,
+  .reply-error {
+    outline: 1px solid ${red};
   }
   @media (min-width: 767px) {
     & > .suggetions-container {
@@ -247,6 +252,7 @@ export default function Suggestion() {
   const [currentComment, setCurrentComment] = useState(null);
   const [message, setMessage] = useState({});
   const [characters, setCharacters] = useState(0);
+  const [errors, setErrors] = useState({});
 
   const router = useRouter();
 
@@ -273,14 +279,16 @@ export default function Suggestion() {
 
   const addComment = (e) => {
     e.preventDefault();
+    if (!message.comment) {
+      setErrors({ comment: "comment-error" });
+      return;
+    }
     const newComment = {
       content: message.comment,
       id: `comment-${currentFeedback.comments.length + 1}`,
       user: user,
     };
-    if (!message.comment) {
-      return;
-    }
+
     const comment = [...currentFeedback.comments, newComment];
     addToLocalStorage(comment);
     e.target.reset();
@@ -289,6 +297,7 @@ export default function Suggestion() {
   const addReply = (e) => {
     e.preventDefault();
     if (!message.reply) {
+      setErrors({ reply: "reply-error" });
       return;
     }
     const newReply = {
@@ -320,6 +329,7 @@ export default function Suggestion() {
       setShowForm((p) => ({ ...showForm, show: true }));
     }
     setMessage({});
+    setErrors({});
   }, [showForm.id]);
 
   useEffect(() => {
@@ -339,6 +349,8 @@ export default function Suggestion() {
         name={typeComment ? "comment" : "reply"}
         onChange={(e) => handleChange(e, typeComment ? "comment" : "reply")}
         maxLength={250}
+        data-cy={typeComment ? "comment" : "reply"}
+        className={typeComment ? errors?.comment : errors?.reply}
       />
       <div>
         {typeComment && (
@@ -351,6 +363,7 @@ export default function Suggestion() {
           fontSize={h4}
           className="color-button"
           type="submit"
+          data-cy={typeComment ? "comment-button" : "reply-button"}
         >
           Post {typeComment ? "Comment" : "Reply"}
         </Button>
@@ -388,6 +401,7 @@ export default function Suggestion() {
               setReplyingTo(reply.user.username);
               setCurrentComment(comment);
             }}
+            data-cy="reply-to-reply"
           >
             Reply
           </TextButton>
@@ -423,6 +437,7 @@ export default function Suggestion() {
                   className="color-button"
                   backgroundColor={blue}
                   hoverBackgroundColor={blue2}
+                  data-cy="edit-button"
                 >
                   Edit Feedback
                 </Button>
@@ -466,6 +481,7 @@ export default function Suggestion() {
                         fontSize={textBody3}
                         fontWeight={semibold}
                         textColor={blue}
+                        data-cy="reply-toggle"
                         onClick={() => {
                           setShowForm((p) => ({
                             show: !showForm.show,

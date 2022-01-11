@@ -371,9 +371,8 @@ export default function Roadmap() {
                 <div
                   key={status}
                   className={
-                    mobile
-                      ? currentStatus?.title.toLowerCase() === status &&
-                        `${status}`
+                    mobile && currentStatus?.title.toLowerCase() === status
+                      ? `${status}`
                       : ""
                   }
                 >

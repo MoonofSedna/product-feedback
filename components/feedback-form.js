@@ -158,10 +158,10 @@ export default function FeedbackForm({
               className={errors.title && "error"}
               defaultValue={feedback && values?.title}
             />
-            {errors.title && <small>{errors.title}</small>}
+            {errors.title && <small data-cy="form-error">{errors.title}</small>}
           </div>
           <Spacer height="25px" />
-          <div>
+          <div data-cy="category">
             <label>Category</label>
             <small>Choose a category for your feedback</small>
             <Spacer height="12px" />
@@ -169,11 +169,12 @@ export default function FeedbackForm({
               items={itemCategories}
               getValue={getCategory}
               defaultValue={feedback && values?.category}
+              data="category"
             />
           </div>
 
           {feedback && (
-            <div>
+            <div data-cy="status">
               <Spacer height="25px" />
               <label>Update Status</label>
               <small>Change feature state</small>
@@ -182,6 +183,7 @@ export default function FeedbackForm({
                 items={itemStatus}
                 getValue={getStatus}
                 defaultValue={feedback && values?.status}
+                data="status"
               />
             </div>
           )}
@@ -202,7 +204,9 @@ export default function FeedbackForm({
               className={errors.description && "error"}
               defaultValue={feedback && values?.description}
             />
-            {errors.description && <small>{errors.description}</small>}
+            {errors.description && (
+              <small data-cy="form-error">{errors.description}</small>
+            )}
           </div>
           <Spacer height="40px" />
           <div className="button-container">
@@ -216,6 +220,7 @@ export default function FeedbackForm({
                   className="color-button"
                   onClick={deleteFeedback}
                   type="button"
+                  data-cy="delete-feedback"
                 >
                   Delete
                 </Button>
@@ -237,6 +242,7 @@ export default function FeedbackForm({
               hoverBackgroundColor={purple2}
               className="color-button"
               type="submit"
+              data-cy="submit-feedback"
             >
               {feedback ? "Save Changes" : "Add Feedback"}
             </Button>

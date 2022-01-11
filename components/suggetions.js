@@ -35,17 +35,17 @@ const Container = styled.div`
   }
 `;
 
-export default function Suggestions({ data }) {
-  const [suggestions, setSuggestions] = useRecoilState(feedbacks);
+export default function Suggestions({ data, feedbacks, setFeedbacks }) {
+  // const [suggestions, setSuggestions] = useRecoilState(feedbacks);
   return (
-    <Container>
+    <Container data-cy="suggestion-list">
       {data.map((feedback) => (
         <FeedbackCard
           key={feedback.id}
           data={feedback}
           hoverCard
           withLink
-          vote={() => addVote(feedback, suggestions, setSuggestions)}
+          vote={() => addVote(feedback, feedbacks, setFeedbacks)}
         />
       ))}
     </Container>
