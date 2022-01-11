@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { RecoilRoot } from "recoil";
 import { SSRProvider } from "react-bootstrap";
 import Head from "next/head";
-import "../styles/app.css";
 import UserContext from "../context";
 import JSONData from "../public/data.json";
 // utils

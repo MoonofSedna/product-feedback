@@ -91,6 +91,45 @@ export default function Layout({ children }) {
           a {
             text-decoration: none;
           }
+          div .color-button {
+            display: flex;
+            justify-content: center;
+            flex-direction: row;
+            padding: 12px 26px;
+            color: var(--white);
+          }
+
+          div .color-button:before {
+            position: relative;
+            left: -5px;
+          }
+
+          body .offcanvas-end {
+            top: 74px;
+            width: 280px;
+          }
+          body .offcanvas-body {
+            background-color: var(--gray-2);
+            padding: 25px;
+          }
+
+          body .offcanvas-body > div {
+            margin-bottom: 20px;
+          }
+
+          @media screen and (max-width: 767px) {
+            div .color-button {
+              font-size: 13px;
+              padding: 10px 20px;
+            }
+          }
+
+          @media (min-width: 767px) {
+            body .offcanvas-end,
+            body .offcanvas-backdrop {
+              display: none;
+            }
+          }
         `}
       />
 
