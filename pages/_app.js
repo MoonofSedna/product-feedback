@@ -24,6 +24,7 @@ function MyApp({ Component, pageProps }) {
       <RecoilRoot initializeState={initRecoilState}>
         <UserContext.Provider value={{ user }}>
           <Head>
+            <title>Product Feedback</title>
             <meta
               name="viewport"
               content="minimum-scale=1, initial-scale=1, width=device-width"

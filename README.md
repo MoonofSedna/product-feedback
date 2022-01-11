@@ -10,4 +10,4 @@ npm i
 npm run dev
 
 # run e5e tests with cypress
-npm run tests:e2e
+npm run test:e2e
